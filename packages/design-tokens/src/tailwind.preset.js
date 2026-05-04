@@ -1,79 +1,58 @@
-/**
- * Tailwind preset that wires design tokens into Tailwind theme.
- * Used via tailwind.config.ts: `presets: [require('@braindump/design-tokens/tailwind')]`
- */
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+const preset = {
   theme: {
     extend: {
       colors: {
         bg: {
-          DEFAULT: 'var(--bd-bg-default)',
-          card: 'var(--bd-bg-card)',
-          subtle: 'var(--bd-bg-subtle)',
+          DEFAULT: '#fdfaf6',
+          card: '#ffffff',
+          subtle: '#fbf8f3',
         },
         ink: {
-          DEFAULT: 'var(--bd-ink-default)',
-          soft: 'var(--bd-ink-soft)',
-          faint: 'var(--bd-ink-faint)',
-          'very-faint': 'var(--bd-ink-very-faint)',
+          DEFAULT: '#2a2138',
+          soft: '#5d5168',
+          faint: '#9a8fa8',
+          'very-faint': '#cfc6d8',
         },
         accent: {
-          DEFAULT: 'var(--bd-accent)',
-          deep: 'var(--bd-accent-deep)',
-          soft: 'var(--bd-accent-soft)',
+          DEFAULT: '#b67cf5',
+          deep: '#7c4dd8',
+          soft: '#ead9ff',
         },
-        pink: {
-          DEFAULT: 'var(--bd-pink)',
-          soft: 'var(--bd-pink-soft)',
-        },
-        peach: {
-          DEFAULT: 'var(--bd-peach)',
-          soft: 'var(--bd-peach-soft)',
-        },
-        sky: {
-          DEFAULT: 'var(--bd-sky)',
-          soft: 'var(--bd-sky-soft)',
-        },
-        mint: {
-          DEFAULT: 'var(--bd-mint)',
-          soft: 'var(--bd-mint-soft)',
+        secondary: {
+          pink: '#f5a6b8',
+          'pink-soft': '#fde4ea',
+          peach: '#f7b59a',
+          'peach-soft': '#fde4d8',
+          sky: '#88b6ec',
+          'sky-soft': '#d8e6f8',
+          mint: '#9bd4b5',
+          'mint-soft': '#dcf0e4',
         },
         rule: {
-          DEFAULT: 'var(--bd-rule)',
-          strong: 'var(--bd-rule-strong)',
+          DEFAULT: 'rgba(42,33,56,0.08)',
+          strong: 'rgba(42,33,56,0.14)',
         },
       },
       fontFamily: {
-        display: 'var(--bd-font-display)',
-        ui: 'var(--bd-font-ui)',
+        display: ['"Fraunces"', '"Source Serif Pro"', 'Georgia', 'serif'],
+        ui: ['"Plus Jakarta Sans"', '-apple-system', '"Segoe UI"', 'sans-serif'],
       },
       borderRadius: {
-        sm: 'var(--bd-radius-sm)',
-        md: 'var(--bd-radius-md)',
-        lg: 'var(--bd-radius-lg)',
-        xl: 'var(--bd-radius-xl)',
-        pill: 'var(--bd-radius-pill)',
+        sm: '8px',
+        md: '12px',
+        lg: '16px',
+        xl: '22px',
+        pill: '999px',
       },
       boxShadow: {
-        sm: 'var(--bd-shadow-sm)',
-        md: 'var(--bd-shadow-md)',
-        lg: 'var(--bd-shadow-lg)',
-        xl: 'var(--bd-shadow-xl)',
-      },
-      backgroundImage: {
-        'grad-bg': 'var(--bd-grad-bg)',
-        'grad-bg-soft': 'var(--bd-grad-bg-soft)',
-        'grad-accent': 'var(--bd-grad-accent)',
-      },
-      maxWidth: {
-        content: 'var(--bd-max-content-width)',
-      },
-      screens: {
-        tablet: '640px',
-        desktop: '768px',
-        wide: '1024px',
+        sm: '0 1px 2px rgba(80,50,120,0.08)',
+        md: '0 3px 10px rgba(80,50,120,0.10)',
+        lg: '0 6px 24px rgba(80,50,120,0.12)',
+        xl: '0 20px 60px rgba(80,50,120,0.25)',
       },
     },
   },
 };
+
+export default preset;
