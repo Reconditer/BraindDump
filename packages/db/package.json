@@ -1,0 +1,21 @@
+{
+  "name": "@braindump/db",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@braindump/core": "workspace:*",
+    "dexie": "^4.0.10"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}
