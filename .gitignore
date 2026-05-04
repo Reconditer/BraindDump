@@ -10,11 +10,17 @@ coverage
 .vite
 
 # TypeScript build artefacts (packages/)
-packages/*/src/*.js
 packages/*/src/*.js.map
-packages/*/src/*.d.ts
 packages/*/src/*.d.ts.map
 packages/*/*.tsbuildinfo
+# Generated JS/d.ts from TS sources — but NOT hand-written plain-JS files
+packages/core/src/*.js
+packages/core/src/*.d.ts
+packages/db/src/*.js
+packages/db/src/*.d.ts
+packages/design-tokens/src/index.js
+packages/design-tokens/src/index.d.ts
+# tailwind.preset.js and tailwind.d.ts are hand-written source files — keep them
 
 # TypeScript build artefacts (apps/)
 apps/*/src/**/*.js
