@@ -1,1 +1,0 @@
-{"version":3,"file":"compress-image.d.ts","sourceRoot":"","sources":["compress-image.ts"],"names":[],"mappings":"AAAA;;;;;;;;;GASG;AAOH,MAAM,WAAW,eAAe;IAC9B,IAAI,EAAE,IAAI,CAAC;IACX,KAAK,EAAE,IAAI,CAAC;IACZ,KAAK,EAAE,MAAM,CAAC;IACd,MAAM,EAAE,MAAM,CAAC;IACf,QAAQ,EAAE,YAAY,CAAC;CACxB;AAED,wBAAsB,aAAa,CAAC,IAAI,EAAE,IAAI,GAAG,OAAO,CAAC,eAAe,CAAC,CA6BxE"}

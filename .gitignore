@@ -8,3 +8,26 @@ coverage
 .DS_Store
 *.log
 .vite
+
+# TypeScript build artefacts (packages/)
+packages/*/src/*.js
+packages/*/src/*.js.map
+packages/*/src/*.d.ts
+packages/*/src/*.d.ts.map
+packages/*/*.tsbuildinfo
+
+# TypeScript build artefacts (apps/)
+apps/*/src/**/*.js
+apps/*/src/**/*.js.map
+apps/*/src/**/*.d.ts
+apps/*/src/**/*.d.ts.map
+apps/*/*.tsbuildinfo
+apps/*/tailwind.config.js
+apps/*/tailwind.config.js.map
+apps/*/tailwind.config.d.ts
+apps/*/tailwind.config.d.ts.map
+apps/*/vite.config.js
+apps/*/vite.config.js.map
+apps/*/vite.config.d.ts
+apps/*/vite.config.d.ts.map
+apps/*/postcss.config.js
