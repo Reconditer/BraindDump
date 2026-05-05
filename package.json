@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
-    "start": "serve apps/web/dist -l 0.0.0.0:$PORT --single",
+    "start": "serve apps/web/dist -l tcp://0.0.0.0:$PORT --single",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",

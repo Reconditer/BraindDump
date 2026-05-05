@@ -5,7 +5,7 @@
     "buildCommand": "pnpm install --frozen-lockfile && pnpm run build"
   },
   "deploy": {
-    "startCommand": "npx serve apps/web/dist -l 0.0.0.0:$PORT --single",
+    "startCommand": "npx serve apps/web/dist -l tcp://0.0.0.0:$PORT --single",
     "healthcheckPath": "/",
     "restartPolicyType": "ON_FAILURE"
   }
