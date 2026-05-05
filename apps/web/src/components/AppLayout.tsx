@@ -53,21 +53,23 @@ export function AppLayout() {
       <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 bg-grad-bg" />
       <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 bg-white/30 desktop:bg-white/50" />
 
-      {/* Desktop layout: sidebar + content */}
-      <div className="mx-auto flex min-h-[100dvh] w-full max-w-content">
+      {/* Desktop layout: Sidebar links am Rand, Content max-width zentriert */}
+      <div className="flex min-h-[100dvh] w-full">
 
-        {/* Desktop Sidebar */}
+        {/* Desktop Sidebar — klebt links, außerhalb des max-width */}
         <DesktopSidebar />
 
-        {/* Main content */}
-        <div
-          className="flex flex-1 flex-col"
-          style={{
-            paddingTop: 'var(--bd-safe-top)',
-            paddingBottom: 'var(--bd-safe-bottom)',
-          }}
-        >
-          <Outlet />
+        {/* Main content — max-width nur auf dem Content-Bereich */}
+        <div className="flex flex-1 flex-col">
+          <div
+            className="mx-auto flex w-full max-w-content flex-1 flex-col"
+            style={{
+              paddingTop: 'var(--bd-safe-top)',
+              paddingBottom: 'var(--bd-safe-bottom)',
+            }}
+          >
+            <Outlet />
+          </div>
         </div>
       </div>
 
