@@ -10,16 +10,6 @@ import { PhotoCapture } from '../photo/PhotoCapture';
 
 type CaptureMode = 'text' | 'photo';
 
-/**
- * UC1 · Sofort-Capture — nach Prototyp-Vorlage (S2_UC1 aus hifi-soft-v2.jsx):
- *
- * - Header: Search-Icon (links) + Grid-Icon (rechts) als IconBubbles
- * - Datum + Uhrzeit klein unter dem Header
- * - Blinkender Cursor-Balken links der Headline
- * - Headline: "Was geht dir gerade durch den Kopf?" (Fraunces, muted)
- * - Textarea unsichtbar über den Bereich
- * - ModeSelector: Schreiben (aktiv) / Foto / Sprechen
- */
 export function CaptureRoute() {
   const navigate = useNavigate();
   const [content, setContent] = useState('');
@@ -28,15 +18,12 @@ export function CaptureRoute() {
   const [now, setNow] = useState(() => new Date());
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
-  // Live-Uhrzeit jede Minute updaten
   useEffect(() => {
     const interval = setInterval(() => setNow(new Date()), 60_000);
     return () => clearInterval(interval);
   }, []);
 
-  useEffect(() => {
-    void requestPersistentStorage();
-  }, []);
+  useEffect(() => { void requestPersistentStorage(); }, []);
 
   // Desktop: auto-focus
   useEffect(() => {
@@ -77,9 +64,9 @@ export function CaptureRoute() {
 
   return (
     <div className="flex flex-1 flex-col">
-      {/* ── Header: Search + Grid IconBubbles ── */}
+
+      {/* ── Header ── */}
       <header className="flex items-center justify-between px-5 pt-4 desktop:px-8 desktop:pt-6">
-        {/* 44px min target (iOS HIG) */}
         <button
           type="button"
           aria-label="Suchen"
@@ -89,7 +76,6 @@ export function CaptureRoute() {
         >
           <SearchIcon />
         </button>
-
         <button
           type="button"
           aria-label="Alle Gedanken"
@@ -101,19 +87,17 @@ export function CaptureRoute() {
         </button>
       </header>
 
-      {/* ── Datum + Uhrzeit + Save-Status (konsistent auf einer Zeile) ── */}
+      {/* ── Datum + Save-Status ── */}
       <div className="bd-meta flex items-center gap-2 px-5 pt-3 pb-1 text-accent-deep desktop:px-8">
         <span>{dateStr} · {timeStr}</span>
         <SaveStatusIndicator status={status} />
       </div>
 
-      {/* ── Editor-Bereich: Cursor + Headline + Textarea ── */}
-      {/* onClick auf main: Tap irgendwo fokussiert Textarea */}
+      {/* ── Editor ── */}
       <main
         className="relative flex flex-1 flex-col overflow-hidden px-5 desktop:px-8"
         onClick={() => textareaRef.current?.focus()}
       >
-        {/* Headline mit blinkendem Cursor — versteckt wenn getippt */}
         {!content && (
           <div className="pointer-events-none flex items-start gap-3 pt-12 desktop:pt-14">
             <span className="bd-cursor-blink" style={{ height: 36, marginTop: 4 }} />
@@ -128,8 +112,6 @@ export function CaptureRoute() {
           </div>
         )}
 
-        {/* Textarea: flex-1 statt absolute, damit kein Keyboard-Overlap.
-            pb sorgt dafür dass Text nie hinter ModeSelector/Tab-Bar verschwindet. */}
         <textarea
           ref={textareaRef}
           value={content}
@@ -138,7 +120,7 @@ export function CaptureRoute() {
           className="absolute inset-0 h-full w-full resize-none bg-transparent px-5 pt-14 text-lg leading-relaxed text-ink focus:outline-none desktop:px-8 desktop:pt-16 desktop:text-xl"
           style={{
             caretColor: 'var(--bd-accent-deep)',
-            paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 140px)',
+            paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 160px)',
           }}
           autoCorrect="on"
           autoCapitalize="sentences"
@@ -152,12 +134,32 @@ export function CaptureRoute() {
         />
       </main>
 
-      {/* ── ModeSelector: Schreiben / Foto / Sprechen ── */}
-      <div className="px-4 pb-5 pt-2 desktop:px-8">
-        <div
-          className="flex items-center justify-around rounded-[20px] px-4 py-3.5 shadow-md"
-          style={{ background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(20px)' }}
-        >
+      {/* ── Bottom Bar: ModeSelector + neuer Gedanke ──
+          Geht von Rand zu Rand, border-top statt floating card.
+          "neuer gedanke" steht ÜBER dem ModeSelector als echter Button. */}
+      <div
+        className="border-t border-rule pb-[72px] desktop:pb-4"
+        style={{
+          background: 'rgba(255,255,255,0.82)',
+          backdropFilter: 'blur(20px)',
+        }}
+      >
+        {/* Neuer Gedanke — nur sichtbar wenn Inhalt da */}
+        {thought && (
+          <div className="border-b border-rule px-5 py-2">
+            <button
+              type="button"
+              onClick={handleNewCapture}
+              className="flex w-full items-center justify-center gap-2 rounded-lg py-2 text-sm font-semibold text-accent-deep transition hover:bg-accent-soft/40"
+            >
+              <span className="text-base leading-none">+</span>
+              neuer gedanke
+            </button>
+          </div>
+        )}
+
+        {/* Mode-Buttons */}
+        <div className="flex items-center justify-around px-6 pt-3 pb-1 desktop:justify-start desktop:gap-8 desktop:px-8">
           <ModeButton
             icon="text"
             label="Schreiben"
@@ -165,17 +167,15 @@ export function CaptureRoute() {
             onClick={() => { setActiveMode('text'); textareaRef.current?.focus(); }}
           />
 
-          {/* Foto-Mode: PhotoCapture integriert */}
           {activeMode === 'photo' ? (
             <div className="flex flex-col items-center gap-1.5">
               <PhotoCapture
                 onSaved={(id) => {
-                  // cancel statt flush — kein leerer Auto-Save der den Thought löscht
                   cancel();
                   navigate(`/thought/${id}`);
                 }}
               />
-              <span className="bd-body-sm text-[11px] font-semibold text-accent-deep">Foto</span>
+              <span className="text-[11px] font-semibold text-accent-deep">Foto</span>
             </div>
           ) : (
             <ModeButton
@@ -185,19 +185,7 @@ export function CaptureRoute() {
               onClick={() => setActiveMode('photo')}
             />
           )}
-
         </div>
-
-        {/* + Neuer Gedanke wenn schon was getippt */}
-        {thought && (
-          <button
-            type="button"
-            onClick={handleNewCapture}
-            className="bd-label mt-3 block w-full text-center text-ink-faint transition hover:text-accent-deep"
-          >
-            + neuer gedanke
-          </button>
-        )}
       </div>
     </div>
   );
@@ -220,7 +208,7 @@ function ModeButton({
       className="flex flex-col items-center gap-1.5"
     >
       <div
-        className="flex h-[46px] w-[46px] items-center justify-center rounded-full transition"
+        className="flex h-11 w-11 items-center justify-center rounded-full transition"
         style={{
           background: active
             ? 'linear-gradient(135deg, var(--bd-accent), var(--bd-accent-deep))'
