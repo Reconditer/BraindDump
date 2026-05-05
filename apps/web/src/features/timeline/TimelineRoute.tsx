@@ -298,7 +298,7 @@ function ThoughtRow({ thought }: { thought: Thought }) {
   return (
     <Link
       to={`/thought/${thought.id}`}
-      className="flex items-start gap-3 rounded-lg bg-white/75 p-4 shadow-sm backdrop-blur-sm transition hover:bg-white hover:shadow-md"
+      className="flex items-start gap-3 rounded-lg bg-white/95 p-4 shadow-sm backdrop-blur-sm transition hover:bg-white hover:shadow-md"
     >
       {thought.type === 'photo' && thought.mediaId && (
         <PhotoThumb mediaId={thought.mediaId} size={48} className="mt-0.5 shrink-0" />
