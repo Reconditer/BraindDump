@@ -19,7 +19,6 @@ const preset = {
           deep: '#7c4dd8',
           soft: '#ead9ff',
         },
-        // Top-level aliases used throughout the app (text-pink, bg-pink-soft, etc.)
         pink: {
           DEFAULT: '#f5a6b8',
           soft: '#fde4ea',
@@ -75,4 +74,4 @@ const preset = {
   },
 };
 
-export default preset;
+module.exports = preset;
