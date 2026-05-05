@@ -39,6 +39,11 @@ export function DetailRoute() {
     async (val) => {
       if (!thought) return;
       if (!val.trim()) {
+        // Foto-Thoughts dürfen leere Caption haben — nur Text-Thoughts löschen
+        if (thought.type === 'photo') {
+          await thoughtRepository.save({ ...thought, content: val });
+          return;
+        }
         await thoughtRepository.remove(thought.id);
         navigate('/timeline');
         return;
