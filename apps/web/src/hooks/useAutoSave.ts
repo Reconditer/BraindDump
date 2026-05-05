@@ -50,10 +50,19 @@ export function useAutoSave<T>(
   }, [value, enabled]);
 
   // Flush on unmount so a thought isn't lost when navigating away mid-type.
+  // Cancel instead of flush when not enabled — avoids phantom saves.
+  const valueRef = useRef(value);
+  valueRef.current = value;
   useEffect(() => {
     return () => {
-      debouncedRef.current?.flush();
+      // Only flush if there's actual content pending — empty flush deletes thoughts
+      if (enabled && valueRef.current) {
+        debouncedRef.current?.flush();
+      } else {
+        debouncedRef.current?.cancel();
+      }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const flush = useCallback(() => debouncedRef.current?.flush(), []);

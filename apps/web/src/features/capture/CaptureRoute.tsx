@@ -45,7 +45,7 @@ export function CaptureRoute() {
     }
   }, []);
 
-  const { status, flush } = useAutoSave(
+  const { status, flush, cancel } = useAutoSave(
     content,
     async (val) => {
       const trimmed = val.trim();
@@ -165,7 +165,8 @@ export function CaptureRoute() {
             <div className="flex flex-col items-center gap-1.5">
               <PhotoCapture
                 onSaved={(id) => {
-                  handleNewCapture();
+                  // cancel statt flush — kein leerer Auto-Save der den Thought löscht
+                  cancel();
                   navigate(`/thought/${id}`);
                 }}
               />
