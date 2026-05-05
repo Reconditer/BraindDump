@@ -59,17 +59,17 @@ export function AppLayout() {
         {/* Desktop Sidebar — klebt links, außerhalb des max-width */}
         <DesktopSidebar />
 
-        {/* Main content — max-width begrenzt, aber mind. 480px damit nichts kollabiert */}
-        <div className="flex min-w-0 flex-1 flex-col">
-          <div
-            className="flex w-full max-w-content flex-1 flex-col"
-            style={{
-              paddingTop: 'var(--bd-safe-top)',
-              paddingBottom: 'var(--bd-safe-bottom)',
-            }}
-          >
-            <Outlet />
-          </div>
+        {/* Main content — volle Breite, kein max-w-content hier.
+            Routen die Content-Breite brauchen setzen sie selbst (z.B. prose-Inhalt).
+            Bottom-Bars müssen von Rand zu Rand gehen → max-w darf nicht im Wrapper sein. */}
+        <div
+          className="flex min-w-0 flex-1 flex-col"
+          style={{
+            paddingTop: 'var(--bd-safe-top)',
+            paddingBottom: 'var(--bd-safe-bottom)',
+          }}
+        >
+          <Outlet />
         </div>
       </div>
 
