@@ -8,7 +8,7 @@ import { requestPersistentStorage } from '@/utils/storage';
 import { SaveStatusIndicator } from './SaveStatusIndicator';
 import { PhotoCapture } from '../photo/PhotoCapture';
 
-type CaptureMode = 'text' | 'photo' | 'voice';
+type CaptureMode = 'text' | 'photo';
 
 /**
  * UC1 · Sofort-Capture — nach Prototyp-Vorlage (S2_UC1 aus hifi-soft-v2.jsx):
@@ -79,37 +79,38 @@ export function CaptureRoute() {
     <div className="flex flex-1 flex-col">
       {/* ── Header: Search + Grid IconBubbles ── */}
       <header className="flex items-center justify-between px-5 pt-4 desktop:px-8 desktop:pt-6">
+        {/* 44px min target (iOS HIG) */}
         <button
           type="button"
           aria-label="Suchen"
           onClick={() => navigate('/timeline?search=1')}
-          className="flex h-9 w-9 items-center justify-center rounded-full shadow-sm backdrop-blur-md transition hover:bg-white"
+          className="flex h-11 w-11 items-center justify-center rounded-full shadow-sm backdrop-blur-md transition hover:bg-white"
           style={{ background: 'rgba(255,255,255,0.65)' }}
         >
           <SearchIcon />
         </button>
 
-        <SaveStatusIndicator status={status} />
-
         <button
           type="button"
           aria-label="Alle Gedanken"
           onClick={() => navigate('/timeline')}
-          className="flex h-9 w-9 items-center justify-center rounded-full shadow-sm backdrop-blur-md transition hover:bg-white"
+          className="flex h-11 w-11 items-center justify-center rounded-full shadow-sm backdrop-blur-md transition hover:bg-white"
           style={{ background: 'rgba(255,255,255,0.65)' }}
         >
           <GridIcon />
         </button>
       </header>
 
-      {/* ── Datum + Uhrzeit ── */}
-      <div className="bd-meta px-5 pt-3 pb-1 text-accent-deep desktop:px-8">
-        {dateStr} · {timeStr}
+      {/* ── Datum + Uhrzeit + Save-Status (konsistent auf einer Zeile) ── */}
+      <div className="bd-meta flex items-center gap-2 px-5 pt-3 pb-1 text-accent-deep desktop:px-8">
+        <span>{dateStr} · {timeStr}</span>
+        <SaveStatusIndicator status={status} />
       </div>
 
       {/* ── Editor-Bereich: Cursor + Headline + Textarea ── */}
+      {/* onClick auf main: Tap irgendwo fokussiert Textarea */}
       <main
-        className="relative flex flex-1 flex-col px-5 desktop:px-8"
+        className="relative flex flex-1 flex-col overflow-hidden px-5 desktop:px-8"
         onClick={() => textareaRef.current?.focus()}
       >
         {/* Headline mit blinkendem Cursor — versteckt wenn getippt */}
@@ -127,14 +128,18 @@ export function CaptureRoute() {
           </div>
         )}
 
-        {/* Unsichtbare Textarea über den gesamten Bereich */}
+        {/* Textarea: flex-1 statt absolute, damit kein Keyboard-Overlap.
+            pb sorgt dafür dass Text nie hinter ModeSelector/Tab-Bar verschwindet. */}
         <textarea
           ref={textareaRef}
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder=""
           className="absolute inset-0 h-full w-full resize-none bg-transparent px-5 pt-14 text-lg leading-relaxed text-ink focus:outline-none desktop:px-8 desktop:pt-16 desktop:text-xl"
-          style={{ caretColor: 'var(--bd-accent-deep)' }}
+          style={{
+            caretColor: 'var(--bd-accent-deep)',
+            paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 140px)',
+          }}
           autoCorrect="on"
           autoCapitalize="sentences"
           spellCheck
@@ -181,21 +186,7 @@ export function CaptureRoute() {
             />
           )}
 
-          <ModeButton
-            icon="voice"
-            label="Sprechen"
-            active={activeMode === 'voice'}
-            onClick={() => setActiveMode('voice')}
-            disabled
-          />
         </div>
-
-        {/* Voice nicht unterstützt Hinweis */}
-        {activeMode === 'voice' && (
-          <p className="bd-body-sm mt-2 text-center text-ink-faint" style={{ fontSize: 11 }}>
-            Voice ist in dieser Version nicht verfügbar.
-          </p>
-        )}
 
         {/* + Neuer Gedanke wenn schon was getippt */}
         {thought && (
@@ -215,20 +206,18 @@ export function CaptureRoute() {
 /* ── Sub-Components ── */
 
 function ModeButton({
-  icon, label, active, onClick, disabled = false,
+  icon, label, active, onClick,
 }: {
-  icon: 'text' | 'photo' | 'voice';
+  icon: 'text' | 'photo';
   label: string;
   active: boolean;
   onClick: () => void;
-  disabled?: boolean;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      disabled={disabled}
-      className="flex flex-col items-center gap-1.5 disabled:opacity-40"
+      className="flex flex-col items-center gap-1.5"
     >
       <div
         className="flex h-[46px] w-[46px] items-center justify-center rounded-full transition"
@@ -242,7 +231,6 @@ function ModeButton({
       >
         {icon === 'text' && <TextIcon />}
         {icon === 'photo' && <PhotoIcon />}
-        {icon === 'voice' && <VoiceIcon />}
       </div>
       <span
         className="text-[11px] font-semibold"
@@ -283,14 +271,6 @@ function PhotoIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M3 8h3l2-3h8l2 3h3v11H3z" /><circle cx="12" cy="13" r="4" />
-    </svg>
-  );
-}
-function VoiceIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <rect x="9" y="3" width="6" height="12" rx="3" />
-      <path d="M5 11a7 7 0 0 0 14 0M12 18v3" />
     </svg>
   );
 }

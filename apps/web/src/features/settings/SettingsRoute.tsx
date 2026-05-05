@@ -56,13 +56,13 @@ export function SettingsRoute() {
       <header className="flex items-center px-5 pt-4 pb-4 desktop:px-8 desktop:pt-6">
         <Link
           to="/timeline"
-          className="text-xs font-semibold uppercase tracking-widest text-ink-faint transition hover:text-ink-soft"
+          className="inline-flex min-h-[44px] items-center px-1 text-xs font-semibold uppercase tracking-widest text-ink-faint transition hover:text-ink-soft"
         >
           ← zurück
         </Link>
       </header>
 
-      <main className="flex flex-1 flex-col gap-6 px-5 pb-10 desktop:px-8">
+      <main className="flex flex-1 flex-col gap-6 overflow-auto px-5 pb-24 desktop:px-8">
         <h1 className="text-xl font-semibold text-ink">Einstellungen</h1>
 
         <Section title="Speicher">

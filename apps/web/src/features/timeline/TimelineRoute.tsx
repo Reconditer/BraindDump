@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { thoughtRepository } from '@braindump/db';
@@ -27,24 +27,50 @@ export function TimelineRoute() {
   );
 
   const [searchResultIds, setSearchResultIds] = useState<string[] | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  // UX-Standard: Undo-Toast (5s, dann endgültig löschen)
+  // Detail-View Delete: undoId im Query-Param → gleicher Undo-Toast wie Swipe.
+  // Thought ist noch in DB (wurde NICHT sofort gelöscht).
+  useEffect(() => {
+    const undoId = searchParams.get('undoId');
+    if (!undoId) return;
+    setSearchParams((p) => { const n = new URLSearchParams(p); n.delete('undoId'); return n; }, { replace: true });
+
+    void thoughtRepository.get(undoId).then((t) => {
+      if (!t) return;
+      // Optimistisch aus Liste ausblenden
+      setDeletedIds((prev) => new Set([...prev, undoId]));
+      const timer = setTimeout(() => {
+        void thoughtRepository.remove(undoId);
+        setDeletedIds((prev) => { const n = new Set(prev); n.delete(undoId); return n; });
+        setUndoEntry(null);
+      }, 5000);
+      setUndoEntry({ thought: t, timer });
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Undo-Toast + safe delete: DB-Remove erst nach 5s, nicht sofort.
+  // Vorher nur lokal aus Liste filtern → kein Datenverlust bei Navigation.
   const [undoEntry, setUndoEntry] = useState<UndoEntry | null>(null);
+  const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set());
 
   const handleDelete = useCallback((thought: Thought) => {
-    // Haptik: kurze Vibration beim Delete-Reveal commit
     vibrate(10);
 
-    // Vorheriger Undo-Timer abbrechen + sofort löschen wenn neuer kommt
+    // Vorherigen pending Delete jetzt endgültig in DB schreiben
     if (undoEntry) {
       clearTimeout(undoEntry.timer);
       void thoughtRepository.remove(undoEntry.thought.id);
     }
 
-    // Optimistisch aus DB entfernen (LiveQuery updated die Liste)
-    void thoughtRepository.remove(thought.id);
+    // Optimistisch aus Liste ausblenden, aber NICHT sofort aus DB löschen
+    setDeletedIds((prev) => new Set([...prev, thought.id]));
 
     const timer = setTimeout(() => {
+      // Erst jetzt aus DB entfernen — Undo-Fenster ist abgelaufen
+      void thoughtRepository.remove(thought.id);
+      setDeletedIds((prev) => { const n = new Set(prev); n.delete(thought.id); return n; });
       setUndoEntry(null);
     }, 5000);
 
@@ -55,23 +81,28 @@ export function TimelineRoute() {
     if (!undoEntry) return;
     clearTimeout(undoEntry.timer);
     vibrate([10, 50, 10]);
-    void thoughtRepository.save(undoEntry.thought);
+    // Einfach aus lokaler Filter-Liste entfernen — Thought ist noch in DB
+    setDeletedIds((prev) => { const n = new Set(prev); n.delete(undoEntry.thought.id); return n; });
     setUndoEntry(null);
   }, [undoEntry]);
 
-  // Cleanup beim Unmount
+  // Cleanup beim Unmount: pending Deletes endgültig in DB schreiben
   useEffect(() => {
     return () => {
-      if (undoEntry) clearTimeout(undoEntry.timer);
+      if (undoEntry) {
+        clearTimeout(undoEntry.timer);
+        void thoughtRepository.remove(undoEntry.thought.id);
+      }
     };
   }, [undoEntry]);
 
   // Filter + re-sort by search score when search is active
   const thoughts = useMemo(() => {
-    if (searchResultIds === null) return allThoughts;
+    const base = allThoughts.filter((t) => !deletedIds.has(t.id));
+    if (searchResultIds === null) return base;
     // NICE FIX: preserve relevance order from MiniSearch (best match first)
     const idIndex = new Map(searchResultIds.map((id, i) => [id, i]));
-    return allThoughts
+    return base
       .filter((t) => idIndex.has(t.id))
       .sort((a, b) => (idIndex.get(a.id) ?? 999) - (idIndex.get(b.id) ?? 999));
   }, [allThoughts, searchResultIds]);
@@ -110,17 +141,17 @@ export function TimelineRoute() {
       <header className="flex items-center justify-between px-5 pt-4 pb-3 desktop:px-8 desktop:pt-6">
         <Link
           to="/"
-          className="text-xs font-semibold uppercase tracking-widest text-ink-faint transition hover:text-ink-soft"
+          className="inline-flex min-h-[44px] items-center px-1 text-xs font-semibold uppercase tracking-widest text-ink-faint transition hover:text-ink-soft"
         >
           ← schreiben
         </Link>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-1">
           <span className="text-xs font-semibold uppercase tracking-widest text-ink-faint">
             {allThoughts.length} gedanke{allThoughts.length === 1 ? '' : 'n'}
           </span>
           <Link
             to="/settings"
-            className="text-xs font-semibold uppercase tracking-widest text-ink-faint transition hover:text-ink-soft"
+            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-xs font-semibold uppercase tracking-widest text-ink-faint transition hover:text-ink-soft"
             aria-label="Einstellungen"
           >
             ···

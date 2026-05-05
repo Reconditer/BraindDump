@@ -162,6 +162,21 @@ button {
   color: inherit;
 }
 
+/* Focus-visible styles — keyboard + assistive tech */
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid var(--bd-accent-deep);
+  outline-offset: 2px;
+  border-radius: var(--bd-radius-sm);
+}
+
+textarea:focus-visible,
+input:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--bd-accent-soft);
+}
+
 /* -------------------------------------------------------------------------- */
 /* Bottom Tab Bar spacing — verhindert dass Content dahinter verschwindet     */
 /* -------------------------------------------------------------------------- */
