@@ -10,20 +10,21 @@ import { DetailRoute } from './features/detail/DetailRoute';
 import { SettingsRoute } from './features/settings/SettingsRoute';
 import { OnboardingRoute, hasSeenOnboarding } from './features/onboarding/OnboardingRoute';
 
+// IndexRoute: reaktiv prüfen ob Onboarding gesehen wurde.
+// Nicht statisch im Router-Array auswerten — sonst wird der Check
+// beim App-Start eingefroren und navigate() nach Onboarding zeigt
+// wieder die Weiterleitung statt CaptureRoute.
+function IndexRoute() {
+  return hasSeenOnboarding() ? <CaptureRoute /> : <Navigate to="/onboarding" replace />;
+}
+
 const routes: RouteObject[] = [
-  {
-    path: '/onboarding',
-    element: <OnboardingRoute />,
-  },
   {
     path: '/',
     element: <AppLayout />,
     children: [
-      {
-        index: true,
-        // Redirect to onboarding on very first visit
-        element: hasSeenOnboarding() ? <CaptureRoute /> : <Navigate to="/onboarding" replace />,
-      },
+      { index: true, element: <IndexRoute /> },
+      { path: 'onboarding', element: <OnboardingRoute /> },
       { path: 'capture', element: <CaptureRoute /> },
       { path: 'timeline', element: <TimelineRoute /> },
       { path: 'thought/:id', element: <DetailRoute /> },

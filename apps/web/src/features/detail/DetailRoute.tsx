@@ -77,9 +77,7 @@ export function DetailRoute() {
         </div>
       </div>
 
-      <main className="flex flex-1 flex-col px-5 pb-10 tab-bar-offset desktop:px-8 desktop:pb-10"
-        style={{ paddingBottom: undefined }}
-      >
+      <main className="flex flex-1 flex-col px-5 tab-bar-offset desktop:px-8 desktop:pb-10">
         {/* Full-res photo if this is a photo thought */}
         {thought.type === 'photo' && thought.mediaId && (
           <div className="mb-4">
