@@ -25,7 +25,6 @@ export function CaptureRoute() {
 
   useEffect(() => { void requestPersistentStorage(); }, []);
 
-  // Desktop: auto-focus
   useEffect(() => {
     if (window.matchMedia('(min-width: 768px)').matches) {
       textareaRef.current?.focus();
@@ -65,7 +64,9 @@ export function CaptureRoute() {
   return (
     <div className="flex flex-1 flex-col">
 
-      {/* ── Header ── */}
+      {/* ── Header ──
+          Mobile: Search links, Foto-Icon rechts (kein Mode-Selector unten)
+          Desktop: Search + Grid IconBubbles */}
       <header className="flex items-center justify-between px-5 pt-4 desktop:px-8 desktop:pt-6">
         <button
           type="button"
@@ -76,11 +77,32 @@ export function CaptureRoute() {
         >
           <SearchIcon />
         </button>
+
+        {/* Mobile: Foto-Button im Header (kein doppelter Mode-Selector unten) */}
+        <div className="flex items-center gap-2 desktop:hidden">
+          {activeMode === 'photo' ? (
+            <PhotoCapture
+              onSaved={(id) => { cancel(); navigate(`/thought/${id}`); }}
+            />
+          ) : (
+            <button
+              type="button"
+              aria-label="Foto aufnehmen"
+              onClick={() => setActiveMode('photo')}
+              className="flex h-11 w-11 items-center justify-center rounded-full shadow-sm backdrop-blur-md transition hover:bg-white"
+              style={{ background: 'rgba(255,255,255,0.65)', color: 'var(--bd-accent-deep)' }}
+            >
+              <PhotoIcon />
+            </button>
+          )}
+        </div>
+
+        {/* Desktop: Grid-Button */}
         <button
           type="button"
           aria-label="Alle Gedanken"
           onClick={() => navigate('/timeline')}
-          className="flex h-11 w-11 items-center justify-center rounded-full shadow-sm backdrop-blur-md transition hover:bg-white"
+          className="hidden h-11 w-11 items-center justify-center rounded-full shadow-sm backdrop-blur-md transition hover:bg-white desktop:flex"
           style={{ background: 'rgba(255,255,255,0.65)' }}
         >
           <GridIcon />
@@ -93,7 +115,7 @@ export function CaptureRoute() {
         <SaveStatusIndicator status={status} />
       </div>
 
-      {/* ── Editor ── */}
+      {/* ── Editor — Content auf Desktop max-width + Padding ── */}
       <main
         className="relative flex flex-1 flex-col overflow-hidden px-5 desktop:px-8"
         onClick={() => textareaRef.current?.focus()}
@@ -101,9 +123,10 @@ export function CaptureRoute() {
         {!content && (
           <div className="pointer-events-none flex items-start gap-3 pt-12 desktop:pt-14">
             <span className="bd-cursor-blink" style={{ height: 36, marginTop: 4 }} />
+            {/* text-ink statt text-ink-soft für besseren Kontrast */}
             <h1
-              className="bd-display m-0 text-ink-soft"
-              style={{ fontSize: 28, lineHeight: 1.25 }}
+              className="bd-display m-0 max-w-lg text-ink"
+              style={{ fontSize: 'clamp(22px, 2.5vw, 32px)', lineHeight: 1.25 }}
             >
               Was geht dir<br />
               gerade durch<br />
@@ -120,7 +143,8 @@ export function CaptureRoute() {
           className="absolute inset-0 h-full w-full resize-none bg-transparent px-5 pt-14 text-lg leading-relaxed text-ink focus:outline-none desktop:px-8 desktop:pt-16 desktop:text-xl"
           style={{
             caretColor: 'var(--bd-accent-deep)',
-            paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 160px)',
+            // Mobile: extra padding-bottom für Tab-Bar (64px) + Buffer
+            paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 80px)',
           }}
           autoCorrect="on"
           autoCapitalize="sentences"
@@ -134,47 +158,37 @@ export function CaptureRoute() {
         />
       </main>
 
-      {/* ── Bottom Bar: ModeSelector + neuer Gedanke ──
-          Geht von Rand zu Rand, border-top statt floating card.
-          "neuer gedanke" steht ÜBER dem ModeSelector als echter Button. */}
+      {/* ── Desktop Bottom Bar: Mode-Selector + neuer Gedanke ──
+          Nur auf Desktop sichtbar (Mobile hat Tab-Bar + Header-Icons) */}
       <div
-        className="border-t border-rule pb-[72px] desktop:pb-4"
+        className="hidden border-t border-rule desktop:block"
         style={{
           background: 'rgba(255,255,255,0.82)',
           backdropFilter: 'blur(20px)',
         }}
       >
-        {/* Neuer Gedanke — nur sichtbar wenn Inhalt da */}
         {thought && (
-          <div className="border-b border-rule px-5 py-2">
+          <div className="border-b border-rule px-8 py-2">
             <button
               type="button"
               onClick={handleNewCapture}
-              className="flex w-full items-center justify-center gap-2 rounded-lg py-2 text-sm font-semibold text-accent-deep transition hover:bg-accent-soft/40"
+              className="flex w-full max-w-xs items-center gap-2 rounded-lg py-2 text-sm font-semibold text-accent-deep transition hover:bg-accent-soft/40"
             >
               <span className="text-base leading-none">+</span>
               neuer gedanke
             </button>
           </div>
         )}
-
-        {/* Mode-Buttons */}
-        <div className="flex items-center justify-around px-6 pt-3 pb-1 desktop:justify-start desktop:gap-8 desktop:px-8">
+        <div className="flex items-center gap-6 px-8 py-3">
           <ModeButton
             icon="text"
             label="Schreiben"
             active={activeMode === 'text'}
             onClick={() => { setActiveMode('text'); textareaRef.current?.focus(); }}
           />
-
           {activeMode === 'photo' ? (
             <div className="flex flex-col items-center gap-1.5">
-              <PhotoCapture
-                onSaved={(id) => {
-                  cancel();
-                  navigate(`/thought/${id}`);
-                }}
-              />
+              <PhotoCapture onSaved={(id) => { cancel(); navigate(`/thought/${id}`); }} />
               <span className="text-[11px] font-semibold text-accent-deep">Foto</span>
             </div>
           ) : (
@@ -187,26 +201,32 @@ export function CaptureRoute() {
           )}
         </div>
       </div>
+
+      {/* Mobile: neuer Gedanke als sticky Button über Tab-Bar */}
+      {thought && (
+        <div className="border-t border-rule px-5 py-2 desktop:hidden"
+          style={{ background: 'rgba(255,255,255,0.82)', backdropFilter: 'blur(20px)' }}
+        >
+          <button
+            type="button"
+            onClick={handleNewCapture}
+            className="flex w-full items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-semibold text-accent-deep transition hover:bg-accent-soft/40"
+          >
+            <span className="text-base leading-none">+</span>
+            neuer gedanke
+          </button>
+        </div>
+      )}
     </div>
   );
 }
 
 /* ── Sub-Components ── */
-
-function ModeButton({
-  icon, label, active, onClick,
-}: {
-  icon: 'text' | 'photo';
-  label: string;
-  active: boolean;
-  onClick: () => void;
+function ModeButton({ icon, label, active, onClick }: {
+  icon: 'text' | 'photo'; label: string; active: boolean; onClick: () => void;
 }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="flex flex-col items-center gap-1.5"
-    >
+    <button type="button" onClick={onClick} className="flex flex-col items-center gap-1.5">
       <div
         className="flex h-11 w-11 items-center justify-center rounded-full transition"
         style={{
@@ -220,10 +240,8 @@ function ModeButton({
         {icon === 'text' && <TextIcon />}
         {icon === 'photo' && <PhotoIcon />}
       </div>
-      <span
-        className="text-[11px] font-semibold"
-        style={{ color: active ? 'var(--bd-accent-deep)' : 'var(--bd-ink-soft)' }}
-      >
+      <span className="text-[11px] font-semibold"
+        style={{ color: active ? 'var(--bd-accent-deep)' : 'var(--bd-ink-soft)' }}>
         {label}
       </span>
     </button>
@@ -232,33 +250,14 @@ function ModeButton({
 
 /* ── Icons ── */
 function SearchIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-      <circle cx="10.5" cy="10.5" r="6" /><path d="M19 19l-4-4" />
-    </svg>
-  );
+  return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="10.5" cy="10.5" r="6" /><path d="M19 19l-4-4" /></svg>;
 }
 function GridIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-      <rect x="3" y="3" width="7" height="7" rx="1.5" />
-      <rect x="14" y="3" width="7" height="7" rx="1.5" />
-      <rect x="3" y="14" width="7" height="7" rx="1.5" />
-      <rect x="14" y="14" width="7" height="7" rx="1.5" />
-    </svg>
-  );
+  return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" /><rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" /></svg>;
 }
 function TextIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-      <path d="M5 6h14M5 10h10M5 14h14M5 18h8" />
-    </svg>
-  );
+  return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M5 6h14M5 10h10M5 14h14M5 18h8" /></svg>;
 }
 function PhotoIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M3 8h3l2-3h8l2 3h3v11H3z" /><circle cx="12" cy="13" r="4" />
-    </svg>
-  );
+  return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 8h3l2-3h8l2 3h3v11H3z" /><circle cx="12" cy="13" r="4" /></svg>;
 }

@@ -20,14 +20,14 @@ export function OnboardingRoute() {
   };
 
   return (
-    <div className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden px-5 py-8">
+    <div className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden px-3 py-8 desktop:px-6">
       {/* Aurora background */}
       <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 bg-grad-bg" />
       <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 bg-white/20" />
 
-      {/* Card — zentriert auf allen Screens */}
+      {/* px-4 Außen-Padding → Card nutzt volle Breite minus 32px Rand, kein Clip */}
       <div
-        className="w-full max-w-sm rounded-2xl p-8 desktop:max-w-md desktop:p-12"
+        className="w-full max-w-sm rounded-2xl p-6 desktop:max-w-md desktop:p-10"
         style={{ background: 'rgba(255,255,255,0.55)', backdropFilter: 'blur(24px)' }}
       >
         <div className="bd-meta mb-5 text-accent-deep">Willkommen</div>
@@ -40,11 +40,11 @@ export function OnboardingRoute() {
           <span className="bd-display-italic text-accent-deep">los.</span>
         </h1>
 
-        <p className="bd-body mb-3 text-ink-soft" style={{ lineHeight: 1.7 }}>
+        <p className="bd-body mb-3 break-words text-ink-soft" style={{ lineHeight: 1.7 }}>
           Keine Tags. Keine Ordner. Keine Einrichtung.
         </p>
-        <p className="bd-body mb-8 text-ink-soft" style={{ lineHeight: 1.7 }}>
-          Wir kümmern uns um Struktur — du um Gedanken.
+        <p className="bd-body mb-8 break-words text-ink-soft" style={{ lineHeight: 1.7 }}>
+          Wir kümmern uns um Struktur —<br />du um Gedanken.
         </p>
 
         <button

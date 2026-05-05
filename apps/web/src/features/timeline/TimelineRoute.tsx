@@ -138,20 +138,22 @@ export function TimelineRoute() {
       )}
 
       {/* Header */}
-      <header className="flex items-center justify-between px-5 pt-4 pb-3 desktop:px-8 desktop:pt-6">
+      <header className="flex items-center justify-between px-4 pt-4 pb-3 desktop:px-8 desktop:pt-6">
         <Link
           to="/"
-          className="inline-flex min-h-[44px] items-center px-1 text-xs font-semibold uppercase tracking-widest text-ink-faint transition hover:text-ink-soft"
+          className="inline-flex min-h-[44px] shrink-0 items-center text-[10px] font-semibold uppercase tracking-wider text-ink-faint transition hover:text-ink-soft desktop:tracking-widest"
         >
           ← schreiben
         </Link>
-        <div className="flex items-center gap-1">
-          <span className="text-xs font-semibold uppercase tracking-widest text-ink-faint">
-            {allThoughts.length} gedanke{allThoughts.length === 1 ? '' : 'n'}
+        <div className="flex shrink-0 items-center gap-1">
+          {/* Mobile: nur Zahl, kein Label — spart Platz */}
+          <span className="text-[10px] font-semibold uppercase tracking-wider text-ink-faint desktop:tracking-widest">
+            <span className="desktop:hidden">{allThoughts.length}</span>
+            <span className="hidden desktop:inline">{allThoughts.length} gedanken</span>
           </span>
           <Link
             to="/settings"
-            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-xs font-semibold uppercase tracking-widest text-ink-faint transition hover:text-ink-soft"
+            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center text-[10px] font-semibold text-ink-faint transition hover:text-ink-soft"
             aria-label="Einstellungen"
           >
             ···
@@ -342,7 +344,7 @@ function EmptyState({ isSearch }: { isSearch: boolean }) {
               <path d="M12 20h9M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
             </svg>
           </div>
-          <p className="text-base text-ink-faint desktop:text-lg">
+          <p className="max-w-[260px] text-base text-ink-faint desktop:text-lg">
             schreib was neues,{' '}
             <Link
               to="/"

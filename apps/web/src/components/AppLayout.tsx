@@ -93,7 +93,7 @@ function DesktopSidebar() {
   ];
 
   return (
-    <aside className="hidden desktop:flex desktop:w-60 desktop:flex-col desktop:border-r desktop:border-rule desktop:bg-white/40 desktop:px-5 desktop:py-6 desktop:backdrop-blur-md">
+    <aside className="hidden desktop:flex desktop:w-60 desktop:flex-col desktop:border-r desktop:border-rule desktop:bg-white/70 desktop:px-5 desktop:py-6 desktop:backdrop-blur-md">
       {/* Logo */}
       <div className="mb-8 flex items-center gap-2 px-3">
         <span

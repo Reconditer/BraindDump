@@ -66,7 +66,7 @@ export function SettingsRoute() {
         <h1 className="max-w-xl text-xl font-semibold text-ink">Einstellungen</h1>
 
         <Section title="Speicher">
-          <div className="rounded-lg bg-white/75 p-4 shadow-sm">
+          <div className="overflow-hidden rounded-lg bg-white/75 p-4 shadow-sm">
             <p className="mb-3 text-xs text-ink-faint">
               Deine Gedanken liegen <strong>lokal auf diesem Gerät</strong>. Kein Cloud-Sync.
             </p>
@@ -103,7 +103,7 @@ export function SettingsRoute() {
         </Section>
 
         <Section title="Daten exportieren">
-          <div className="rounded-lg bg-white/75 p-4 shadow-sm">
+          <div className="overflow-hidden rounded-lg bg-white/75 p-4 shadow-sm">
             <p className="mb-4 text-xs text-ink-faint">
               Exportiere alle Gedanken als JSON (nur Text) oder als ZIP (inkl. Fotos).
             </p>
@@ -136,7 +136,7 @@ export function SettingsRoute() {
 
         {/* UX-Standard: 3 passive Feature-Hints — kein Modal, keine Tour, nur hier sichtbar */}
         <Section title="Was die App kann">
-          <div className="rounded-lg bg-white/75 p-4 shadow-sm">
+          <div className="overflow-hidden rounded-lg bg-white/75 p-4 shadow-sm">
             <ul className="flex flex-col gap-2.5">
               {[
                 'tipp auf einen Eintrag — ähnliche Gedanken erscheinen darunter.',
@@ -153,7 +153,7 @@ export function SettingsRoute() {
         </Section>
 
         <Section title="App">
-          <div className="rounded-lg bg-white/75 p-4 shadow-sm">
+          <div className="overflow-hidden rounded-lg bg-white/75 p-4 shadow-sm">
             <InfoRow label="Version" value="0.1.0 POC" />
             <InfoRow label="Tech" value="React + Vite + Dexie" />
           </div>
@@ -165,7 +165,7 @@ export function SettingsRoute() {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="max-w-xl">
+    <div className="w-full max-w-xl">
       <h2 className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-ink-faint">{title}</h2>
       {children}
     </div>
