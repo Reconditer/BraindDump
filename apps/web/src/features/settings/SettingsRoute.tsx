@@ -63,7 +63,7 @@ export function SettingsRoute() {
       </header>
 
       <main className="flex flex-1 flex-col gap-6 overflow-auto px-5 pb-24 desktop:px-8">
-        <h1 className="text-xl font-semibold text-ink">Einstellungen</h1>
+        <h1 className="max-w-xl text-xl font-semibold text-ink">Einstellungen</h1>
 
         <Section title="Speicher">
           <div className="rounded-lg bg-white/75 p-4 shadow-sm">
@@ -165,7 +165,7 @@ export function SettingsRoute() {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div>
+    <div className="max-w-xl">
       <h2 className="mb-2 text-[10px] font-semibold uppercase tracking-widest text-ink-faint">{title}</h2>
       {children}
     </div>

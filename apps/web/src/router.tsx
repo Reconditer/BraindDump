@@ -19,12 +19,16 @@ function IndexRoute() {
 }
 
 const routes: RouteObject[] = [
+  // Onboarding bekommt eigenes minimales Layout — keine Nav, keine Tab-Bar
+  {
+    path: '/onboarding',
+    element: <OnboardingRoute />,
+  },
   {
     path: '/',
     element: <AppLayout />,
     children: [
       { index: true, element: <IndexRoute /> },
-      { path: 'onboarding', element: <OnboardingRoute /> },
       { path: 'capture', element: <CaptureRoute /> },
       { path: 'timeline', element: <TimelineRoute /> },
       { path: 'thought/:id', element: <DetailRoute /> },

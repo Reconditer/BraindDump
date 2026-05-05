@@ -59,10 +59,10 @@ export function AppLayout() {
         {/* Desktop Sidebar — klebt links, außerhalb des max-width */}
         <DesktopSidebar />
 
-        {/* Main content — max-width nur auf dem Content-Bereich */}
-        <div className="flex flex-1 flex-col">
+        {/* Main content — max-width begrenzt, aber mind. 480px damit nichts kollabiert */}
+        <div className="flex min-w-0 flex-1 flex-col">
           <div
-            className="mx-auto flex w-full max-w-content flex-1 flex-col"
+            className="flex w-full max-w-content flex-1 flex-col"
             style={{
               paddingTop: 'var(--bd-safe-top)',
               paddingBottom: 'var(--bd-safe-bottom)',
@@ -93,7 +93,7 @@ function DesktopSidebar() {
   ];
 
   return (
-    <aside className="hidden desktop:flex desktop:w-52 desktop:flex-col desktop:border-r desktop:border-rule desktop:bg-white/40 desktop:px-4 desktop:py-6 desktop:backdrop-blur-md">
+    <aside className="hidden desktop:flex desktop:w-60 desktop:flex-col desktop:border-r desktop:border-rule desktop:bg-white/40 desktop:px-5 desktop:py-6 desktop:backdrop-blur-md">
       {/* Logo */}
       <div className="mb-8 flex items-center gap-2 px-3">
         <span
@@ -154,8 +154,8 @@ function MobileTabBar() {
           key={item.to}
           to={item.to}
           end={item.exact}
-          // UX-Standard: min 44px touch target (iOS HIG)
-          className="flex min-h-[44px] flex-col items-center justify-center gap-1 px-4"
+          // flex-1 damit alle 3 Items gleichmäßig die volle Breite teilen
+          className="flex min-h-[44px] flex-1 flex-col items-center justify-center gap-1"
           aria-label={item.label}
         >
           {({ isActive }) => (

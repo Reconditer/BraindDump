@@ -330,22 +330,28 @@ function EmptyState({ isSearch }: { isSearch: boolean }) {
   return (
     <div className="flex flex-1 items-center justify-center px-6 pb-16 text-center">
       {isSearch ? (
-        // UX-Standard: hilfreicher Hinweis statt nur "keine treffer"
-        <div className="flex flex-col gap-1">
-          <p className="text-sm text-ink-faint">nichts gefunden.</p>
-          <p className="text-xs text-ink-very-faint">versuch einzelne Wörter statt Sätze.</p>
+        <div className="flex flex-col gap-2">
+          <p className="text-base text-ink-faint desktop:text-lg">nichts gefunden.</p>
+          <p className="text-sm text-ink-very-faint">versuch einzelne Wörter statt Sätze.</p>
         </div>
       ) : (
-        // UX-Standard: warm + einladend, nicht technisch
-        <p className="text-sm text-ink-faint">
-          schreib was neues,{' '}
-          <Link
-            to="/"
-            className="text-accent-deep underline decoration-accent/50 underline-offset-4"
-          >
-            wir vergessen nichts.
-          </Link>
-        </p>
+        <div className="flex flex-col gap-3">
+          {/* Dezentes Icon */}
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-accent-soft/60">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" className="text-accent-deep/60">
+              <path d="M12 20h9M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
+            </svg>
+          </div>
+          <p className="text-base text-ink-faint desktop:text-lg">
+            schreib was neues,{' '}
+            <Link
+              to="/"
+              className="text-accent-deep underline decoration-accent/50 underline-offset-4"
+            >
+              wir vergessen nichts.
+            </Link>
+          </p>
+        </div>
       )}
     </div>
   );
